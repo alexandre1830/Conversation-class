@@ -11,24 +11,24 @@
   "levels": {
     "A1": {
       "name": "Beginner",
-      "description": "Simple personal questions using present simple, basic vocabulary, and familiar topics. Designed to elicit short narratives and personal preferences.",
+      "description": "Simple personal questions using present simple, basic vocabulary, and familiar topics. Designed to elicit short narratives and personal preferences. Focus on basic communication skills.",
       "questions": [
-        { "id": "A1-01", "question": "What is your name and where are you from? Tell me about your hometown.", "topic": "personal_information" },
+        { "id": "A1-01", "question": "Tell me about your hometown. How is it?", "topic": "personal_information" },
         { "id": "A1-02", "question": "What is your favorite food? Why do you like it? How often do you eat it?", "topic": "food" },
         { "id": "A1-03", "question": "Do you have a big family? Tell me about the people in your family.", "topic": "family" },
         { "id": "A1-04", "question": "What do you usually do every morning before school or work?", "topic": "daily_routine" },
-        { "id": "A1-05", "question": "What is your favorite color? Where do you see this color in your life?", "topic": "preferences" },
+        { "id": "A1-05", "question": "What is your favorite color? What are some things you like with this color?", "topic": "preferences" },
         { "id": "A1-06", "question": "Do you have a pet? Describe your pet, or describe a pet you would like to have.", "topic": "animals" },
         { "id": "A1-07", "question": "What do you do in your free time? Tell me about your hobbies.", "topic": "hobbies" },
-        { "id": "A1-08", "question": "What is your favorite season of the year? What do you do in that season?", "topic": "weather" },
+        { "id": "A1-08", "question": "What is your favorite season of the year? Why? What do you do in that season?", "topic": "weather" },
         { "id": "A1-09", "question": "Do you like sports? Which sports do you watch or play?", "topic": "sports" },
-        { "id": "A1-10", "question": "What is your favorite day of the week? What do you usually do on that day?", "topic": "daily_routine" },
-        { "id": "A1-11", "question": "Tell me about your best friend. What do you like to do together?", "topic": "friendship" },
+        { "id": "A1-10", "question": "What is your favorite day of the week? Why is it your favorite? What do you usually do on that day?", "topic": "daily_routine" },
+        { "id": "A1-11", "question": "Tell me about your best friend. How long do you know him? What do you like to do together?", "topic": "friendship" },
         { "id": "A1-12", "question": "What kind of music do you like? Who is your favorite singer or band?", "topic": "music" },
-        { "id": "A1-13", "question": "Do you like to cook? What food can you make? Who taught you?", "topic": "food" },
+        { "id": "A1-13", "question": "Do you like to cook? What's your favorite food to prepare?", "topic": "food" },
         { "id": "A1-14", "question": "Describe your bedroom. What do you have in it? What is your favorite thing in your bedroom?", "topic": "home" },
         { "id": "A1-15", "question": "What clothes do you like to wear? What do you wear to school, work, or a party?", "topic": "clothes" },
-        { "id": "A1-16", "question": "Do you like your school or your job? Why or why not? Tell me about a normal day.", "topic": "school_work" },
+        { "id": "A1-16", "question": "Do you like your school or your job? Why or why not?", "topic": "school_work" },
         { "id": "A1-17", "question": "What is your favorite place in your city? Why do you like it?", "topic": "places" },
         { "id": "A1-18", "question": "What time do you go to bed and wake up? Do you sleep enough? Why or why not?", "topic": "daily_routine" },
         { "id": "A1-19", "question": "Do you like to travel? Where do you want to go in the future? Why?", "topic": "travel" },
@@ -47,7 +47,7 @@
     },
     "A2": {
       "name": "Elementary",
-      "description": "Questions using past tense, future forms, and comparatives. Topics include personal experiences, simple opinions, and basic descriptions of people, places, and events.",
+      "description": "Questions using past tense, future forms and comparatives. Topics include personal experiences, simple opinions, and basic descriptions of people, places, and events. Expected more complete responses.",
       "questions": [
         { "id": "A2-01", "question": "Tell me about your last vacation. Where did you go and what did you do there?", "topic": "travel" },
         { "id": "A2-02", "question": "What did you do last weekend? Did you have fun? What was the best part?", "topic": "past_experiences" },
@@ -155,7 +155,7 @@
     },
     "C1": {
       "name": "Advanced",
-      "description": "Questions demanding sophisticated argumentation, recognition of multiple perspectives, and engagement with abstract, philosophical, or specialized concepts. Lexical precision, idiomatic flexibility, and structural variety are expected.",
+      "description": "Questions demanding sophisticated argumentation and engagement with abstract or specialized concepts. Lexical precision, idiomatic flexibility, and structural variety are expected.",
       "questions": [
         { "id": "C1-01", "question": "Critically evaluate the claim that meritocracy is a myth used to legitimize structural inequality rather than a system that genuinely rewards talent and effort.", "topic": "social_critique" },
         { "id": "C1-02", "question": "To what extent does technological progress correlate with moral progress? Can a society become more advanced without becoming more humane?", "topic": "philosophy" },
