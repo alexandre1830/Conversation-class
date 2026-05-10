@@ -1,5 +1,6 @@
 const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-const NOTES_KEY = 'heyTeacher:notes';
+const NOTES_KEY   = 'heyTeacher:notes';
+const REVIEWS_KEY = 'heyTeacher:reviews';
 
 /* ─── Notes storage (localStorage) ──────────────────────────── */
 
@@ -27,6 +28,34 @@ function clearLevelNotes(questions) {
   const all = loadAllNotes();
   questions.forEach(q => delete all[q.id]);
   saveAllNotes(all);
+}
+
+/* ─── Review-flag storage ───────────────────────────────────── */
+
+function loadAllReviews() {
+  try { return JSON.parse(localStorage.getItem(REVIEWS_KEY) || '{}'); }
+  catch { return {}; }
+}
+
+function saveAllReviews(reviews) {
+  localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
+}
+
+function setReview(qId, marked) {
+  const all = loadAllReviews();
+  if (marked) all[qId] = true;
+  else delete all[qId];
+  saveAllReviews(all);
+}
+
+function getReview(qId) {
+  return !!loadAllReviews()[qId];
+}
+
+function clearLevelReviews(questions) {
+  const all = loadAllReviews();
+  questions.forEach(q => delete all[q.id]);
+  saveAllReviews(all);
 }
 
 /* ─── Data Loading ──────────────────────────────────────────── */
@@ -146,15 +175,18 @@ async function exportPDF(level, levelName, questions) {
     return;
   }
 
-  const all = loadAllNotes();
+  const all     = loadAllNotes();
+  const reviews = loadAllReviews();
   const answered = questions
-    .map((q, i) => ({ q, num: i + 1, note: all[q.id] }))
-    .filter(x => x.note && x.note.trim());
+    .map((q, i) => ({ q, num: i + 1, note: all[q.id], review: !!reviews[q.id] }))
+    .filter(x => (x.note && x.note.trim()) || x.review);
 
   if (answered.length === 0) {
-    alert('No notes to export yet.\nClick a question and write a note first.');
+    alert('Nothing to export yet.\nWrite a note or mark a question for review first.');
     return;
   }
+
+  const reviewTotal = answered.filter(a => a.review).length;
 
   // Try to load the school logo (optional — silently skipped if missing)
   let logo = null;
@@ -195,7 +227,11 @@ async function exportPDF(level, levelName, questions) {
   const dateStr = new Date().toLocaleDateString(undefined, {
     year: 'numeric', month: 'long', day: 'numeric'
   });
-  doc.text(`${dateStr} · ${answered.length} question${answered.length > 1 ? 's' : ''} answered`, margin, y);
+  let summary = `${dateStr} · ${answered.length} question${answered.length > 1 ? 's' : ''} answered`;
+  if (reviewTotal > 0) {
+    summary += ` · ${reviewTotal} flagged for review`;
+  }
+  doc.text(summary, margin, y);
   y += 22;
 
   // Divider
@@ -205,17 +241,21 @@ async function exportPDF(level, levelName, questions) {
   y += 26;
 
   // ── Questions + answers ──
-  const badgeW = 26;
-  const badgeH = 16;
+  const badgeW       = 26;
+  const badgeH       = 16;
+  const reviewBadgeW = 70;
 
-  answered.forEach(({ q, num, note }) => {
+  answered.forEach(({ q, num, note, review }) => {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11.5);
-    const qLines = doc.splitTextToSize(q.question, contentW - 36);
+    // Reserve right-side space when a review badge will be drawn
+    const qWrapW = contentW - 36 - (review ? reviewBadgeW + 10 : 0);
+    const qLines = doc.splitTextToSize(q.question, qWrapW);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
-    const noteLines = doc.splitTextToSize(note, contentW - 18);
+    const noteText = (note && note.trim()) ? note : '— No answer recorded —';
+    const noteLines = doc.splitTextToSize(noteText, contentW - 18);
 
     const blockH = qLines.length * 14 + 8 + noteLines.length * 13.5 + 22;
 
@@ -224,15 +264,12 @@ async function exportPDF(level, levelName, questions) {
       y = margin + 10;
     }
 
-    // Question text baseline sits at `y`. Vertically center the badge on
-    // the cap-height of the first line (~y - 4) so Q-text is centered.
     const badgeCenterY = y - 4;
     const badgeTop     = badgeCenterY - badgeH / 2;
 
     // Q number badge
     doc.setFillColor(166, 4, 4);
     doc.roundedRect(margin, badgeTop, badgeW, badgeH, 3, 3, 'F');
-
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     doc.setTextColor(255, 255, 255);
@@ -241,6 +278,20 @@ async function exportPDF(level, levelName, questions) {
       baseline: 'middle'
     });
 
+    // FOR REVIEW badge (right side, same line as Q badge)
+    if (review) {
+      const rX = pageW - margin - reviewBadgeW;
+      doc.setFillColor(209, 129, 128);
+      doc.roundedRect(rX, badgeTop, reviewBadgeW, badgeH, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(255, 255, 255);
+      doc.text('FOR REVIEW', rX + reviewBadgeW / 2, badgeCenterY, {
+        align: 'center',
+        baseline: 'middle'
+      });
+    }
+
     // Question text
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11.5);
@@ -248,12 +299,21 @@ async function exportPDF(level, levelName, questions) {
     doc.text(qLines, margin + 36, y);
     y += qLines.length * 14 + 8;
 
-    // Notes
-    doc.setFont('helvetica', 'normal');
+    // Notes (or placeholder for review-only entries)
+    doc.setFont('helvetica', review && !(note && note.trim()) ? 'italic' : 'normal');
     doc.setFontSize(11);
-    doc.setTextColor(55, 55, 55);
+    doc.setTextColor(review && !(note && note.trim()) ? 140 : 55,
+                     review && !(note && note.trim()) ? 140 : 55,
+                     review && !(note && note.trim()) ? 140 : 55);
     doc.text(noteLines, margin + 18, y);
     y += noteLines.length * 13.5 + 22;
+
+    // Subtle rose vertical accent on the left for review items
+    if (review) {
+      doc.setDrawColor(209, 129, 128);
+      doc.setLineWidth(2);
+      doc.line(margin - 10, badgeTop - 1, margin - 10, y - 18);
+    }
   });
 
   // ── Page footer with numbers ──
@@ -295,16 +355,17 @@ function renderCards(data) {
   const cardEls = [];
 
   /* ─── Spotlight elements ─────────────────────────────────── */
-  const spotlight    = document.getElementById('spotlight');
-  const spNum        = document.getElementById('spotlight-num');
-  const spCounter    = document.getElementById('spotlight-counter');
-  const spQ          = document.getElementById('spotlight-q');
-  const spTag        = document.getElementById('spotlight-tag');
-  const spClose      = document.getElementById('spotlight-close');
-  const spPrev       = document.getElementById('spotlight-prev');
-  const spNext       = document.getElementById('spotlight-next');
-  const spTextarea   = document.getElementById('spotlight-textarea');
-  const spSaved      = document.getElementById('spotlight-saved');
+  const spotlight     = document.getElementById('spotlight');
+  const spNum         = document.getElementById('spotlight-num');
+  const spQ           = document.getElementById('spotlight-q');
+  const spTag         = document.getElementById('spotlight-tag');
+  const spClose       = document.getElementById('spotlight-close');
+  const spPrev        = document.getElementById('spotlight-prev');
+  const spNext        = document.getElementById('spotlight-next');
+  const spTextarea    = document.getElementById('spotlight-textarea');
+  const spSaved       = document.getElementById('spotlight-saved');
+  const spReview      = document.getElementById('spotlight-review');
+  const spReviewText  = spReview ? spReview.querySelector('.spotlight-review-text') : null;
 
   let currentIndex = -1;
   let saveTimer = null;
@@ -357,14 +418,21 @@ function renderCards(data) {
       });
     }
 
-    spNum.textContent     = i + 1;
-    spCounter.textContent = `${i + 1} of ${total}`;
-    spQ.textContent       = q.question;
-    spTag.textContent     = q.topic.replace(/_/g, ' ');
+    spNum.textContent = i + 1;
+    spQ.textContent   = q.question;
+    spTag.textContent = q.topic.replace(/_/g, ' ');
 
     // Load saved note
     spTextarea.value = getNote(q.id);
     spSaved.classList.remove('visible');
+
+    // Reflect review state on toggle
+    const isMarked = getReview(q.id);
+    spReview.classList.toggle('active', isMarked);
+    spReview.setAttribute('aria-pressed', String(isMarked));
+    if (spReviewText) {
+      spReviewText.textContent = isMarked ? 'Review' : 'Review';
+    }
 
     spPrev.disabled = i === 0;
     spNext.disabled = i === total - 1;
@@ -406,6 +474,11 @@ function renderCards(data) {
           <span class="card-tap-hint">Tap to reveal</span>
         </div>
         <div class="card-back" aria-hidden="true">
+          <span class="card-review-flag" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M5 21V4c0-.55.45-1 1-1h11l-2.5 4L17 11H6v10H5z"/>
+            </svg>
+          </span>
           <p class="card-q">${q.question}</p>
           <span class="card-tag">${topicLabel}</span>
         </div>
@@ -425,6 +498,22 @@ function renderCards(data) {
   spClose.addEventListener('click', closeSpotlight);
   spPrev.addEventListener('click',  () => showQuestion(currentIndex - 1));
   spNext.addEventListener('click',  () => showQuestion(currentIndex + 1));
+
+  /* ─── Review toggle ──────────────────────────────────────── */
+  if (spReview) {
+    spReview.addEventListener('click', () => {
+      if (currentIndex < 0) return;
+      const q = questions[currentIndex];
+      const newState = !spReview.classList.contains('active');
+      spReview.classList.toggle('active', newState);
+      spReview.setAttribute('aria-pressed', String(newState));
+      if (spReviewText) {
+        spReviewText.textContent = newState ? 'Review' : 'Review';
+      }
+      setReview(q.id, newState);
+      cardEls[currentIndex].classList.toggle('marked-review', newState);
+    });
+  }
 
   spotlight.addEventListener('click', (e) => {
     if (e.target === spotlight) closeSpotlight();
@@ -469,39 +558,49 @@ function renderCards(data) {
     });
   }
 
-  /* ─── Reset All — clears flips AND notes for this level ─── */
+  /* ─── Reset All — clears flips, notes AND reviews ────────── */
   const resetBtn = document.getElementById('reset-btn');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      const noteCount = questions.filter(q => getNote(q.id)).length;
+      const noteCount    = questions.filter(q => getNote(q.id)).length;
+      const reviewCount  = questions.filter(q => getReview(q.id)).length;
       const flippedCount = document.querySelectorAll('.card.flipped').length;
 
-      if (noteCount > 0 || flippedCount > 0) {
+      if (noteCount > 0 || flippedCount > 0 || reviewCount > 0) {
         const parts = [];
         if (flippedCount) parts.push(`${flippedCount} card${flippedCount > 1 ? 's' : ''}`);
         if (noteCount)    parts.push(`${noteCount} note${noteCount > 1 ? 's' : ''}`);
-        const msg = `This will clear ${parts.join(' and ')} for level ${level}.\n\nContinue?`;
+        if (reviewCount)  parts.push(`${reviewCount} review flag${reviewCount > 1 ? 's' : ''}`);
+        const msg = `This will clear ${parts.join(', ')} for level ${level}.\n\nContinue?`;
         if (!confirm(msg)) return;
       }
 
       cardEls.forEach((c, i) => {
-        c.classList.remove('flipped');
+        c.classList.remove('flipped', 'marked-review');
         c.setAttribute('aria-pressed', 'false');
         c.setAttribute('aria-label', `Card ${i + 1} — click to reveal question`);
       });
       clearLevelNotes(questions);
+      clearLevelReviews(questions);
+
       if (spotlight.classList.contains('active') && currentIndex >= 0) {
         spTextarea.value = '';
+        spReview.classList.remove('active');
+        spReview.setAttribute('aria-pressed', 'false');
+        if (spReviewText) spReviewText.textContent = 'Mark for review';
       }
       updateCounter();
     });
   }
 
-  /* ─── Restore flipped state for cards that already have notes ─ */
+  /* ─── Restore flipped + review state from storage ────────── */
   questions.forEach((q, i) => {
     if (getNote(q.id)) {
       cardEls[i].classList.add('flipped');
       cardEls[i].setAttribute('aria-pressed', 'true');
+    }
+    if (getReview(q.id)) {
+      cardEls[i].classList.add('marked-review');
     }
   });
 

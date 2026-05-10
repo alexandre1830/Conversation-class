@@ -561,6 +561,30 @@ body {
   z-index: 1;
 }
 
+/* Review flag on card-back (visible only when marked) */
+.card-review-flag {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--rose);
+  opacity: 0;
+  transform: scale(0.5) rotate(-12deg);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 0 5px rgba(209, 129, 128, 0.55));
+}
+
+.card.marked-review .card-review-flag {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
 /* ══════════════════════════════════════════════════════════════
    SPOTLIGHT — zoomed question modal
 ══════════════════════════════════════════════════════════════ */
@@ -689,14 +713,67 @@ body {
   border: 1px solid rgba(209, 129, 128, 0.30);
   border-radius: 9px;
   background: rgba(209, 129, 128, 0.06);
+}
+
+/* ─── Tag + review row ─── */
+.spotlight-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   animation: qFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.3s;
 }
 
+.spotlight-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--steel);
+  background: transparent;
+  border: 1px solid var(--steel-15);
+  padding: 7px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: color 0.22s ease, border-color 0.22s ease,
+              background 0.22s ease, transform 0.18s ease,
+              box-shadow 0.22s ease;
+}
+
+.spotlight-review:hover:not(.active) {
+  color: var(--rose);
+  border-color: rgba(209, 129, 128, 0.4);
+  background: rgba(209, 129, 128, 0.07);
+}
+
+.spotlight-review:active { transform: scale(0.96); }
+
+.spotlight-review.active {
+  color: var(--white);
+  background: var(--rose);
+  border-color: var(--rose);
+  box-shadow: 0 6px 18px rgba(209, 129, 128, 0.35);
+}
+
+.spotlight-review.active:hover {
+  background: #c97170;
+  border-color: #c97170;
+}
+
+.spotlight-review svg {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.spotlight-review.active svg {
+  transform: rotate(-12deg) scale(1.12);
+}
+
 .spotlight-close {
-  position: absolute;
-  top: 18px;
-  right: 18px;
   width: 42px;
   height: 42px;
   background: var(--white-05);
@@ -707,6 +784,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.18s;
 }
 
@@ -797,17 +875,17 @@ body {
 .spotlight-textarea {
   display: block;
   width: 100%;
-  min-height: 130px;
-  max-height: 320px;
-  padding: 16px 18px;
+  min-height: 240px;
+  max-height: 460px;
+  padding: 20px 22px;
   font-family: 'Outfit', system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: 1.5rem;
+  line-height: 1.6;
   font-weight: 400;
   color: var(--white);
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--steel-15);
-  border-radius: 12px;
+  border-radius: 14px;
   resize: vertical;
   transition: border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
   scrollbar-width: thin;
@@ -884,7 +962,7 @@ body {
   .spotlight-num    { font-size: 2rem; padding: 4px 16px; border-radius: 9px; }
   .spotlight-q      { font-size: 1.25rem; margin-bottom: 24px; }
   .spotlight-tag    { font-size: 0.72rem; padding: 5px 14px; }
-  .spotlight-close  { width: 36px; height: 36px; top: 12px; right: 12px; }
+  .spotlight-close  { width: 36px; height: 36px; }
   .spotlight-nav    { width: 44px; height: 44px; }
   .spotlight-nav svg { width: 20px; height: 20px; }
 }
@@ -899,6 +977,6 @@ body {
   .export-btn span { display: none; }
   .card-q      { font-size: 0.82rem; }
   .spotlight-q { font-size: 1.1rem; line-height: 1.45; }
-  .spotlight-textarea { font-size: 0.9rem; min-height: 110px; padding: 12px 14px; }
+  .spotlight-textarea { font-size: 0.95rem; min-height: 180px; padding: 14px 16px; }
   .spotlight-notes { margin-top: 22px; padding-top: 18px; }
 }

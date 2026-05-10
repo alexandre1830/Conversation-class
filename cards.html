@@ -54,30 +54,38 @@
     </button>
 
     <div class="spotlight-card">
-      <button class="spotlight-close" id="spotlight-close" aria-label="Close">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6L6 18M6 6l12 12"/>
-        </svg>
-      </button>
-
       <div class="spotlight-header">
         <span class="spotlight-num" id="spotlight-num">1</span>
-        <span class="spotlight-counter" id="spotlight-counter">1 of 30</span>
+        <button class="spotlight-close" id="spotlight-close" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
 
       <p class="spotlight-q" id="spotlight-q">&nbsp;</p>
-      <span class="spotlight-tag" id="spotlight-tag">topic</span>
+
+      <div class="spotlight-meta">
+        <span class="spotlight-tag" id="spotlight-tag">topic</span>
+        <button type="button" class="spotlight-review" id="spotlight-review" aria-pressed="false" aria-label="Toggle review flag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+            <line x1="4" y1="22" x2="4" y2="15"/>
+          </svg>
+          <span class="spotlight-review-text">Review</span>
+        </button>
+      </div>
 
       <div class="spotlight-notes">
         <div class="spotlight-notes-head">
-          <label for="spotlight-textarea" class="spotlight-notes-label">Notes &middot; Student answer</label>
+          <label for="spotlight-textarea" class="spotlight-notes-label">Notes</label>
           <span class="spotlight-saved" id="spotlight-saved" aria-live="polite">Saved</span>
         </div>
         <textarea
           id="spotlight-textarea"
           class="spotlight-textarea"
-          placeholder="Type the student's answer or your corrections here…"
-          rows="5"
+          placeholder="Type…"
+          rows="4"
           spellcheck="true"></textarea>
       </div>
     </div>
