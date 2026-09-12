@@ -25,6 +25,8 @@
   padding: 0;
 }
 
+[hidden] { display: none !important; }
+
 body {
   font-family: 'Outfit', system-ui, sans-serif;
   background: var(--navy);
@@ -131,6 +133,8 @@ body {
 
 .level-card {
   position: relative;
+  display: block;
+  text-decoration: none;
   background: var(--white-05);
   border: 1px solid var(--steel-15);
   border-radius: 18px;
@@ -233,6 +237,21 @@ body {
 .lc-arrow svg { transition: transform 0.3s ease; flex-shrink: 0; }
 .level-card:hover .lc-arrow svg { transform: translateX(5px); }
 
+.lc-meta {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--steel);
+  padding: 5px 10px;
+  border: 1px solid var(--steel-15);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .landing-footer {
   text-align: center;
   font-size: 0.72rem;
@@ -241,6 +260,249 @@ body {
   letter-spacing: 2px;
   text-transform: uppercase;
 }
+
+/* ─── Menu titles ────────────────────────────────────────────── */
+.menu-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+  color: var(--white);
+}
+
+.activity-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+
+.landing-back {
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  z-index: 2;
+}
+
+/* ─── Activity cards (main menu) ─────────────────────────────── */
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.activity-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 22px 22px 26px;
+  background: var(--white-05);
+  border: 1px solid var(--steel-15);
+  border-radius: 22px;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  user-select: none;
+  transition:
+    transform     0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background    0.25s ease,
+    border-color  0.25s ease,
+    box-shadow    0.30s ease;
+}
+
+.activity-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--rose), transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.activity-card:hover::after,
+.activity-card:focus-visible::after { transform: scaleX(1); }
+
+.activity-card:hover,
+.activity-card:focus-visible {
+  transform: translateY(-8px) scale(1.015);
+  background: var(--white-08);
+  border-color: var(--steel-30);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.50),
+    0 0  0 1px var(--red-15);
+  outline: none;
+}
+
+.activity-card:active {
+  transform: translateY(-3px) scale(0.99);
+  transition-duration: 0.12s;
+}
+
+.activity-card.exiting { animation: lcExit 0.28s ease forwards; }
+
+.ac-visual {
+  height: 190px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 70% 80% at 30% 20%, rgba(22, 76, 168, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 90%, rgba(166, 4, 4, 0.18) 0%, transparent 70%),
+    rgba(2, 18, 52, 0.55);
+  border: 1px solid var(--steel-15);
+  overflow: hidden;
+}
+
+.ac-body { padding: 0 8px; }
+
+.ac-kicker {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 8px;
+}
+
+.ac-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.ac-desc {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ac-footer {
+  margin-top: auto;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ac-meta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+.ac-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--rose);
+  transition: color 0.25s ease;
+}
+
+.ac-open svg { transition: transform 0.3s ease; }
+.activity-card:hover .ac-open { color: var(--white); }
+.activity-card:hover .ac-open svg { transform: translateX(5px); }
+
+/* Conversation illustration: fanned cards */
+.ac-stack {
+  position: relative;
+  width: 150px;
+  height: 120px;
+}
+
+.ac-stack-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: var(--white);
+  border: 1px solid var(--steel-15);
+  background: linear-gradient(155deg, rgba(14, 58, 130, 0.95) 0%, rgba(3, 45, 111, 0.98) 100%);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ac-stack-card.back,
+.ac-stack-card.mid {
+  align-items: flex-start;
+  padding-top: 12px;
+  font-size: 1.5rem;
+  letter-spacing: -1px;
+}
+
+.ac-stack-card.back { justify-content: flex-start; padding-left: 12px; transform: translateX(-38px) rotate(-12deg); opacity: 0.7; }
+.ac-stack-card.mid  { justify-content: flex-end; padding-right: 14px; transform: translateX(34px) rotate(9deg); opacity: 0.85; }
+
+.ac-stack-card.front {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 18px;
+  background: linear-gradient(155deg, rgba(3, 28, 74, 0.99) 0%, rgba(2, 18, 50, 0.99) 100%);
+  border-color: var(--red-35);
+}
+
+.ac-stack-card.front::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--rose) 60%, transparent);
+  border-radius: 12px 12px 0 0;
+}
+
+.ac-stack-line {
+  display: block;
+  width: 100%;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.ac-stack-line.short { width: 68%; }
+
+.ac-stack-tag {
+  display: block;
+  width: 40%;
+  height: 5px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: var(--rose);
+  opacity: 0.8;
+}
+
+.activity-card:hover .ac-stack-card.back { transform: translateX(-52px) rotate(-16deg); }
+.activity-card:hover .ac-stack-card.mid  { transform: translateX(48px) rotate(13deg); }
+.activity-card:hover .ac-stack-card.front { transform: translateY(-4px); }
 
 /* ══════════════════════════════════════════════════════════════
    CARDS PAGE — fills viewport, no scroll
@@ -360,6 +622,15 @@ body {
 }
 
 .header-btn:active { transform: scale(0.96); }
+
+.header-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--steel);
+  border-color: var(--steel-15);
+  background: transparent;
+  transform: none;
+}
 
 .export-btn svg { transition: transform 0.25s ease; }
 .export-btn:hover svg { transform: translateY(2px); }
@@ -936,6 +1207,9 @@ body {
 
 @media (max-width: 700px) {
   .landing-container { padding: 44px 20px 36px; gap: 36px; }
+  .landing-back { position: static; align-self: flex-start; margin: -28px 0 -16px; }
+  .menu-title   { font-size: 1.7rem; }
+  .ac-visual    { height: 150px; }
   .logo-text h1 { font-size: 2.6rem; }
   .lc-code      { font-size: 3.6rem; }
 

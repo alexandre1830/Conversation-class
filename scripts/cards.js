@@ -1,4 +1,5 @@
-const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+/* Conversation cards — requires scripts/common.js */
+
 const NOTES_KEY   = 'heyTeacher:notes';
 const REVIEWS_KEY = 'heyTeacher:reviews';
 
@@ -56,103 +57,6 @@ function clearLevelReviews(questions) {
   const all = loadAllReviews();
   questions.forEach(q => delete all[q.id]);
   saveAllReviews(all);
-}
-
-/* ─── Data Loading ──────────────────────────────────────────── */
-
-async function loadData() {
-  try {
-    const res = await fetch('json/questions.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  } catch (err) {
-    document.body.innerHTML = `
-      <div style="
-        display:flex; flex-direction:column; align-items:center;
-        justify-content:center; height:100vh; gap:16px;
-        font-family:Outfit,system-ui,sans-serif; color:#8095b6;
-        text-align:center; padding:28px;
-      ">
-        <div style="font-size:2.5rem">⚠️</div>
-        <div style="font-size:1.15rem; font-weight:700; color:#fff;">
-          Could not load questions.json
-        </div>
-        <div style="font-size:0.88rem; max-width:420px; line-height:1.7; color:rgba(255,255,255,0.45);">
-          This app requires an HTTP server. Open the folder in
-          <strong style="color:#8095b6">VS Code</strong> and click
-          <em>Go Live</em>, or run
-          <code style="background:rgba(255,255,255,0.08);padding:2px 9px;border-radius:5px;font-size:0.85rem">
-            npx serve .
-          </code>
-          in this directory.
-        </div>
-      </div>`;
-    throw err;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   LANDING PAGE
-══════════════════════════════════════════════════════════════ */
-
-function renderLanding(data) {
-  const grid = document.getElementById('levels-grid');
-  if (!grid) return;
-
-  LEVEL_ORDER.forEach((level, i) => {
-    const ld = data.levels[level];
-    const firstSentence =
-      ld.description.match(/^[^.!?]+[.!?]/)?.[0] ?? ld.description;
-
-    const card = document.createElement('li');
-    card.className = 'level-card';
-    card.setAttribute('role', 'listitem');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `Level ${level} – ${ld.name}`);
-
-    card.innerHTML = `
-      <div class="lc-code">${level}</div>
-      <div class="lc-name">${ld.name}</div>
-      <div class="lc-desc">${firstSentence}</div>
-      <div class="lc-arrow" aria-hidden="true">
-        Start
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.5"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </div>
-    `;
-
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(22px)';
-    card.style.transition = `
-      opacity   0.55s cubic-bezier(0.22,1,0.36,1) ${80 + i * 80}ms,
-      transform 0.55s cubic-bezier(0.22,1,0.36,1) ${80 + i * 80}ms,
-      background 0.25s ease,
-      border-color 0.25s ease,
-      box-shadow 0.30s ease
-    `;
-
-    function navigate() {
-      card.classList.add('exiting');
-      setTimeout(() => {
-        window.location.href = `cards.html?level=${encodeURIComponent(level)}`;
-      }, 260);
-    }
-
-    card.addEventListener('click', navigate);
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(); }
-    });
-
-    grid.appendChild(card);
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      card.style.opacity = '1';
-      card.style.transform = 'translateY(0)';
-    }));
-  });
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -610,11 +514,6 @@ function renderCards(data) {
 /* ─── Init ──────────────────────────────────────────────────── */
 
 (async () => {
-  const data = await loadData();
-
-  if (document.getElementById('levels-grid')) {
-    renderLanding(data);
-  } else if (document.getElementById('cards-grid')) {
-    renderCards(data);
-  }
+  const data = await loadJSON(ACTIVITIES.conversation.dataUrl);
+  renderCards(data);
 })();
