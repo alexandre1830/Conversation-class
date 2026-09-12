@@ -293,12 +293,14 @@ body {
 }
 
 /* ─── Activity cards (main menu) ─────────────────────────────── */
+.menu-container { max-width: 1340px; }
+
 .activities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px;
   width: 100%;
-  max-width: 1180px;
+  max-width: 1240px;
   margin: 0 auto;
 }
 
@@ -380,7 +382,7 @@ body {
 }
 
 .ac-title {
-  font-size: 1.9rem;
+  font-size: clamp(1.55rem, 2.2vw, 1.9rem);
   font-weight: 800;
   letter-spacing: -0.6px;
   line-height: 1.1;
@@ -609,6 +611,19 @@ body {
 }
 
 .activity-card:hover .ac-hm { transform: scale(1.06) rotate(-2deg); }
+
+@media (min-width: 1180px) {
+  .activities-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .activity-card .ac-visual { height: 170px; }
+  .ac-stack-card.back { transform: translateX(-30px) rotate(-12deg); }
+  .ac-stack-card.mid  { transform: translateX(28px) rotate(9deg); }
+  .activity-card:hover .ac-stack-card.back { transform: translateX(-40px) rotate(-16deg); }
+  .activity-card:hover .ac-stack-card.mid  { transform: translateX(38px) rotate(13deg); }
+}
+
+@media (max-width: 640px) {
+  .activities-grid { grid-template-columns: 1fr; }
+}
 
 /* ══════════════════════════════════════════════════════════════
    CARDS PAGE — fills viewport, no scroll
