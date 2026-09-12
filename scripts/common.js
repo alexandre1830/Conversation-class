@@ -54,6 +54,29 @@ const ACTIVITIES = {
           `<span class="ac-tile ${st}" style="grid-row:${r + 1};grid-column:${c + 1}">${ch}</span>`
         ).join('')}
       </div>`
+  },
+
+  wordsearch: {
+    id: 'wordsearch',
+    title: 'Word Search',
+    kicker: 'Vocabulary',
+    description: 'Hunt for themed words hidden in a letter grid, or find them from their definitions for an extra challenge.',
+    dataUrl: 'json/wordsearch.json',
+    levelUrl: level => `wordsearch.html?level=${encodeURIComponent(level)}`,
+    levelMeta: ld => `${ld.puzzles.length} puzzles`,
+    totalMeta: data => {
+      const total = LEVEL_ORDER.reduce((sum, l) => sum + data.levels[l].puzzles.length, 0);
+      return `${LEVEL_ORDER.length} levels · ${total} puzzles`;
+    },
+    visual: `
+      <svg class="ac-ws" viewBox="0 0 6 5" aria-hidden="true">
+        <line x1="1.5" y1="1.5" x2="5.5" y2="1.5" stroke="#f2a7a6"/>
+        <line x1="1.5" y1="4.5" x2="4.5" y2="4.5" stroke="#9fc3ec"/>
+        <line x1="0.5" y1="0.5" x2="0.5" y2="3.5" stroke="#a8dcbf"/>
+        ${['FINDXE', 'AWORDS', 'SLETZB', 'TUNHOP', 'CSEEKR'].map((row, r) =>
+          [...row].map((ch, c) => `<text x="${c + 0.5}" y="${r + 0.54}">${ch}</text>`).join('')
+        ).join('')}
+      </svg>`
   }
 };
 
