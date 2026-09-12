@@ -77,6 +77,31 @@ const ACTIVITIES = {
           [...row].map((ch, c) => `<text x="${c + 0.5}" y="${r + 0.54}">${ch}</text>`).join('')
         ).join('')}
       </svg>`
+  },
+
+  hangman: {
+    id: 'hangman',
+    title: 'Hangman',
+    kicker: 'Spelling',
+    description: 'Guess words and idioms letter by letter as a class, before the drawing is complete.',
+    dataUrl: 'json/hangman.json',
+    levelUrl: level => `hangman.html?level=${encodeURIComponent(level)}`,
+    levelMeta: ld => `${ld.puzzles.length} rounds`,
+    totalMeta: data => {
+      const total = LEVEL_ORDER.reduce((sum, l) => sum + data.levels[l].puzzles.length, 0);
+      return `${LEVEL_ORDER.length} levels · ${total} rounds`;
+    },
+    visual: `
+      <div class="ac-hm" aria-hidden="true">
+        <svg class="ac-hm-drawing" viewBox="0 0 120 130">
+          <path class="gallows" d="M12 122 H78 M34 122 V10 H88 V26 M34 36 L58 10"/>
+          <circle cx="88" cy="40" r="13"/>
+          <path d="M88 53 V88 M88 62 L74 78"/>
+        </svg>
+        <div class="ac-hm-word">
+          ${[...'H?NGM?N'].map(ch => `<span class="${ch === '?' ? 'blank' : ''}">${ch === '?' ? '' : ch}</span>`).join('')}
+        </div>
+      </div>`
   }
 };
 
