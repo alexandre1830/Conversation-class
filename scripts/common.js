@@ -29,6 +29,31 @@ const ACTIVITIES = {
           <span class="ac-stack-tag"></span>
         </span>
       </div>`
+  },
+
+  crosswords: {
+    id: 'crosswords',
+    title: 'Crosswords',
+    kicker: 'Vocabulary',
+    description: 'Solve themed crossword puzzles together, with checks and hints to guide the class.',
+    dataUrl: 'json/crosswords.json',
+    levelUrl: level => `crossword.html?level=${encodeURIComponent(level)}`,
+    levelMeta: ld => `${ld.puzzles.length} puzzles`,
+    totalMeta: data => {
+      const total = LEVEL_ORDER.reduce((sum, l) => sum + data.levels[l].puzzles.length, 0);
+      return `${LEVEL_ORDER.length} levels · ${total} puzzles`;
+    },
+    visual: `
+      <div class="ac-mini-grid" aria-hidden="true">
+        ${[
+          // [row, col, letter, state]
+          [0, 1, 'C', ''], [1, 1, 'R', ''], [2, 0, 'W', ''], [2, 1, 'O', ''],
+          [2, 2, 'R', ''], [2, 3, 'D', ''], [3, 1, 'S', ''], [4, 1, 'S', ''],
+          [1, 4, 'U', 'word'], [2, 4, 'S', 'word'], [3, 4, '', 'active'], [4, 4, '', 'word']
+        ].map(([r, c, ch, st]) =>
+          `<span class="ac-tile ${st}" style="grid-row:${r + 1};grid-column:${c + 1}">${ch}</span>`
+        ).join('')}
+      </div>`
   }
 };
 
