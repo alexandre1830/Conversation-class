@@ -295,10 +295,14 @@ body {
 /* ─── Activity cards (main menu) ─────────────────────────────── */
 .menu-container { max-width: 1340px; }
 
+/* Flex instead of grid so an incomplete last row stays centered */
 .activities-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+  --cols: 2;
+  --gap: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--gap);
   width: 100%;
   max-width: 1240px;
   margin: 0 auto;
@@ -306,6 +310,8 @@ body {
 
 .activity-card {
   position: relative;
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 22px;
@@ -612,17 +618,105 @@ body {
 
 .activity-card:hover .ac-hm { transform: scale(1.06) rotate(-2deg); }
 
+/* Quiz show illustration: question with timer + answer tiles */
+.ac-qz {
+  width: min(250px, 84%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ac-qz-question {
+  position: relative;
+  padding: 11px 44px 11px 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy);
+  background: #eef2f9;
+  border-radius: 10px;
+  box-shadow: inset 0 -3px 0 rgba(3, 45, 111, 0.15);
+}
+
+.ac-qz-gap {
+  display: inline-block;
+  min-width: 34px;
+  padding: 0 6px;
+  text-align: center;
+  color: var(--white);
+  background: var(--pz-green, #3fae7a);
+  border-radius: 5px;
+}
+
+.ac-qz-timer {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  width: 26px;
+  height: 26px;
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.ac-qz-timer circle {
+  fill: none;
+  stroke: rgba(3, 45, 111, 0.15);
+  stroke-width: 5;
+}
+
+.ac-qz-timer circle.left {
+  stroke: var(--red);
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 38;
+}
+
+.ac-qz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.ac-qz-options span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--white);
+  background: rgba(238, 242, 249, 0.1);
+  border: 1px solid var(--steel-30);
+  border-radius: 8px;
+}
+
+.ac-qz-options b {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.66rem;
+  color: var(--navy);
+  background: var(--steel);
+  border-radius: 50%;
+}
+
+.ac-qz-options span.ok {
+  background: #3fae7a;
+  border-color: #3fae7a;
+  box-shadow: 0 6px 16px rgba(63, 174, 122, 0.35);
+}
+
+.ac-qz-options span.ok b { background: var(--white); color: #2c8a5e; }
+
+.activity-card:hover .ac-qz { transform: scale(1.06) rotate(2deg); }
+
 @media (min-width: 1180px) {
-  .activities-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .activity-card .ac-visual { height: 170px; }
-  .ac-stack-card.back { transform: translateX(-30px) rotate(-12deg); }
-  .ac-stack-card.mid  { transform: translateX(28px) rotate(9deg); }
-  .activity-card:hover .ac-stack-card.back { transform: translateX(-40px) rotate(-16deg); }
-  .activity-card:hover .ac-stack-card.mid  { transform: translateX(38px) rotate(13deg); }
+  .activities-grid { --cols: 3; }
 }
 
 @media (max-width: 640px) {
-  .activities-grid { grid-template-columns: 1fr; }
+  .activities-grid { --cols: 1; }
 }
 
 /* ══════════════════════════════════════════════════════════════

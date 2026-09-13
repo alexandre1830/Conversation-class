@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════
    THEME-BASED PUZZLE ACTIVITIES — shared layout (builds on styles.css)
-   Used by crossword.html and wordsearch.html
+   Used by crossword.html, wordsearch.html, hangman.html and quiz.html
 ══════════════════════════════════════════════════════════════ */
 
 :root {
@@ -49,16 +49,22 @@
   max-width: 720px;
 }
 
+/* Flex instead of grid so an incomplete last row stays centered */
 .pz-themes-grid {
+  --cols: 3;
+  --gap: 18px;
   max-width: 1180px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--gap);
 }
 
 .pz-theme-card {
   position: relative;
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -545,7 +551,7 @@
 ══════════════════════════════════════════════════════════════ */
 
 @media (max-width: 1100px) {
-  .pz-themes-grid { grid-template-columns: repeat(2, 1fr); }
+  .pz-themes-grid { --cols: 2; }
 }
 
 @media (max-width: 900px) {
@@ -574,7 +580,7 @@
 }
 
 @media (max-width: 600px) {
-  .pz-themes-grid { grid-template-columns: 1fr; }
+  .pz-themes-grid { --cols: 1; }
   .pz-themes-title { font-size: 1.6rem; }
   .pz-bar-nav { width: 34px; height: 34px; }
   .pz-tool-group { padding-left: 10px; }

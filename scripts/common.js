@@ -102,6 +102,32 @@ const ACTIVITIES = {
           ${[...'H?NGM?N'].map(ch => `<span class="${ch === '?' ? 'blank' : ''}">${ch === '?' ? '' : ch}</span>`).join('')}
         </div>
       </div>`
+  },
+
+  quiz: {
+    id: 'quiz',
+    title: 'Grammar Quiz Show',
+    kicker: 'Grammar',
+    description: 'Play a gameshow round of grammar questions against the clock, with lifelines, streaks and team battles.',
+    dataUrl: 'json/quiz.json',
+    levelUrl: level => `quiz.html?level=${encodeURIComponent(level)}`,
+    levelMeta: ld => `${ld.puzzles.length} topics`,
+    totalMeta: data => {
+      const total = LEVEL_ORDER.reduce((sum, l) => sum + data.levels[l].puzzles.length, 0);
+      return `${LEVEL_ORDER.length} levels · ${total} topics`;
+    },
+    visual: `
+      <div class="ac-qz" aria-hidden="true">
+        <div class="ac-qz-question">
+          <svg class="ac-qz-timer" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15"/><circle class="left" cx="18" cy="18" r="15" pathLength="100"/></svg>
+          She <span class="ac-qz-gap">is</span> happy.
+        </div>
+        <div class="ac-qz-options">
+          ${[['A', 'am', ''], ['B', 'is', 'ok'], ['C', 'are', ''], ['D', 'be', '']].map(([key, text, st]) =>
+            `<span class="${st}"><b>${key}</b>${text}</span>`
+          ).join('')}
+        </div>
+      </div>`
   }
 };
 

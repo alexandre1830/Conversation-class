@@ -1,5 +1,5 @@
 /* Shared building blocks for theme-based puzzle activities
-   (crosswords, word search) — requires scripts/common.js
+   (crosswords, word search, hangman, quiz show) — requires scripts/common.js
 
    Page contract (see crossword.html / wordsearch.html):
    header ids   pz-back, pz-back-label, level-badge, level-name, progress-counter, reset-btn
@@ -57,7 +57,14 @@ function puzzleUrl(activity, level, puzzleId) {
 
 /* ─── Theme selection ───────────────────────────────────────── */
 
-function renderThemeSelect({ activity, level, levelData, store, buildModel, preview, meta }) {
+// Default theme card status for word-based puzzles
+function wordStatus(model, saved) {
+  if (saved && saved.complete) return { cls: 'complete', text: 'Solved' };
+  if (saved) return { cls: 'progress', text: `${saved.progress || 0} / ${model.words.length} words` };
+  return { cls: '', text: 'Not started' };
+}
+
+function renderThemeSelect({ activity, level, levelData, store, buildModel, preview, meta, statusText = wordStatus }) {
   const grid     = document.getElementById('pz-themes-grid');
   const resetBtn = document.getElementById('reset-btn');
 
@@ -76,9 +83,7 @@ function renderThemeSelect({ activity, level, levelData, store, buildModel, prev
       const saved = store.get(puzzle.id, model.sig);
       if (saved) withProgress++;
 
-      let status = { cls: '', text: 'Not started' };
-      if (saved && saved.complete) status = { cls: 'complete', text: 'Solved' };
-      else if (saved) status = { cls: 'progress', text: `${saved.progress || 0} / ${model.words.length} words` };
+      const status = statusText(model, saved);
 
       const card = document.createElement('a');
       card.className = `pz-theme-card ${status.cls}`;
@@ -176,7 +181,7 @@ function createCompletionDialog({ activity, level, levelData, puzzleIndex, onClo
 
 // Loads the activity data, fills the header and shows either the theme
 // selection (?level=) or a puzzle (?level=&puzzle=).
-async function startPuzzleActivity(activity, { store, buildModel, preview, meta, renderPuzzle }) {
+async function startPuzzleActivity(activity, { store, buildModel, preview, meta, statusText, renderPuzzle }) {
   const data = await loadJSON(activity.dataUrl);
 
   const rawLevel = getParam('level') ?? '';
@@ -192,7 +197,7 @@ async function startPuzzleActivity(activity, { store, buildModel, preview, meta,
 
   if (puzzleIndex < 0) {
     document.title = `Hey, Teacher! — ${activity.title} · ${level} · ${levelData.name}`;
-    renderThemeSelect({ activity, level, levelData, store, buildModel, preview, meta });
+    renderThemeSelect({ activity, level, levelData, store, buildModel, preview, meta, statusText });
     return;
   }
 
