@@ -99,7 +99,22 @@
             { "answer": "SNOW", "clue": "It is white and very cold. Children play in it." },
             { "answer": "SUN", "clue": "It is big, yellow and hot. You see it in the sky during the day." },
             { "answer": "CLOUD", "clue": "It is white or gray, and it is in the sky." },
-            { "answer": "COLD", "clue": "The opposite of hot." }
+            { "answer": "COLD", "clue": "The temperature opposite of hot." }
+          ]
+        },
+        {
+          "id": "A1-routine",
+            "theme": "Daily Routine",
+            "description": "Things you do every day.",
+          "words": [
+            { "answer": "SLEEP", "clue": "You need to do this every night." },
+            { "answer": "EAT", "clue": "You have to do this every day to survive." },
+            { "answer": "SHOWER", "clue": "You do this to clean yourself." },
+            { "answer": "COMB", "clue": "You do this to style your hair." },
+            { "answer": "WORK", "clue": "You do this to make money and pay bills." },
+            { "answer": "STUDY", "clue": "You do this to learn new things and develop." },
+            { "answer": "READ", "clue": "You do this to learn or to have fun." },
+            { "answer": "WALK", "clue": "You do this to get somewhere or to exercise." }
           ]
         }
       ]
